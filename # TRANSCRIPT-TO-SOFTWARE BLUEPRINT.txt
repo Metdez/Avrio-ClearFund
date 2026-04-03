@@ -1,0 +1,759 @@
+# TRANSCRIPT-TO-SOFTWARE BLUEPRINT
+
+---
+
+## SECTION 1: DOCUMENT METADATA
+
+**Project Name:** Multi-Channel Deal & Relationship Management Platform
+**Version:** v0.1 — Draft from Transcript
+**Date Created:** April 2, 2026
+**Created By:** Zack (Licom AI)
+**Engineering Reviewer:** Assign before handoff
+**Status:** Draft — Pending Engineering Review
+
+---
+
+## SECTION 2: THE PROBLEM IN ONE PARAGRAPH
+
+This is a 14-month-old private credit startup that connects borrowers (hotel developers, infrastructure companies, mining operations) with capital providers (banks, asset managers, family offices, life insurance companies) while blending traditional commercial real estate financing with public financing instruments like PACE. Their current CRM (Zoho) treats relationships as a simple linear pipeline — lead to client to converted — but their business has two entirely separate sides (borrowers and capital providers) with overlapping, multi-threaded relationships: the same capital provider might reject one deal, be evaluating a second deal, and simultaneously be negotiating a long-term credit facility partnership, and Zoho cannot represent any of this. After deals are agreed upon, the 6-to-9-week execution phase requires coordinating 8 to 15 third-party vendors (appraisers, law firms, energy consultants, municipalities) with no centralized status tracking, no standardized process, and no visibility across the team — everyone has their own idea of how it should be done. If nothing changes, deal execution will remain chaotic, relationship context will continue to live in individual inboxes rather than a shared system, and the team will keep relying on Zoho to solve problems it was never designed for.
+
+---
+
+## SECTION 3: WHO USES THIS SOFTWARE
+
+### User Type 1: Deal Team Member
+
+- **Role/Title:** Deal structurer / originator (the people who structure the blend of traditional and public financing)
+- **What they do today:** Manage borrower and capital provider relationships across email, track deal status informally, coordinate with third-party vendors manually, rely on Zoho for basic CRM functions that don't fit their workflow
+- **What they need from this software:** A single view of every relationship (borrower and capital provider), every deal in progress, every conversation thread, and every vendor task — with the ability to see how all of these connect to each other
+- **How often they use it:** Daily
+- **Technical comfort level:** Not technical. The entire team comes from heavy investment and leveraged finance backgrounds. John (the contact) stated he is the youngest at 29 and the team has almost no AI knowledge.
+- **Access level:** Full read/write on deals, relationships, and vendor management
+
+### User Type 2: Capital Raising Team Member
+
+- **Role/Title:** Capital raising / business development (finding and managing capital providers)
+- **What they do today:** Source capital providers, pitch deals, negotiate credit facility terms, manage ongoing capital provider relationships — all through email and Zoho with no way to track the multi-deal, multi-conversation nature of these relationships
+- **What they need from this software:** A way to manage capital provider relationships across multiple simultaneous deals and partnership negotiations, with full conversation history and deal-specific context
+- **How often they use it:** Daily
+- **Technical comfort level:** Not technical
+- **Access level:** Full read/write on capital provider relationships and deal pipelines
+
+### User Type 3: CEO / Senior Leadership
+
+- **Role/Title:** CEO (female, referenced as "she" who "wants to hire")
+- **What they do today:** Oversees deal flow, makes final decisions, likely reviews status of active deals and capital provider relationships
+- **What they need from this software:** High-level visibility into deal pipeline status, capital provider relationship health, and execution progress without needing to dig into individual email threads
+- **How often they use it:** Daily or as-needed
+- **Technical comfort level:** Not technical
+- **Access level:** Admin / full visibility
+
+### User Types NOT Discussed But Likely Needed:
+
+- **System Administrator:** Someone who manages user accounts, permissions, integrations, and configuration. No one in this role was discussed.
+- **External Vendor / Third-Party Contributor:** The 8-15 vendors per deal (appraisers, law firms, energy consultants) may need limited portal access or at minimum a way to receive and respond to task assignments. Not discussed.
+- **Compliance / Legal Reviewer:** Given private credit's regulatory environment and the sensitivity of deal data, there is likely a compliance function that would need audit trail access. Not discussed.
+
+---
+
+## SECTION 4: WHAT THE SOFTWARE MUST DO (CORE FEATURES)
+
+### F-001: Dual-Sided Relationship Management (Borrowers + Capital Providers)
+
+- **Priority:** P0
+- **What the client said:** "We have borrowers on one side. Then on the other side we have the actual capital providers... It's really — CRMs kind of struggle with our business. We're not just managing lead to client to converted clients. We have borrowers on one side and we have capital providers on the other side."
+- **Translated to a clear requirement:** The system must maintain two distinct entity types — Borrowers and Capital Providers — each with their own profiles, relationship histories, and pipeline stages. These two sides must be linkable through Deals (a Deal connects a Borrower to one or more Capital Providers). The system must not force both sides into a single linear sales pipeline.
+- **Who uses this feature:** All user types
+- **What triggers this feature:** User creates or views a Borrower or Capital Provider record
+- **Expected output:** A borrower profile showing all associated deals and status; a capital provider profile showing all associated deals, credit facility status, and relationship type (one-off vs. programmatic partner)
+- **Acceptance Criteria:**
+  1. A user can create a Borrower record and a Capital Provider record as distinct entity types
+  2. A Deal record can be linked to one Borrower and one or more Capital Providers
+  3. Viewing a Capital Provider shows every deal they are or have been involved in, plus any credit facility negotiations
+- **Dependencies:** None — this is foundational
+- **Open Questions:** What specific fields are needed on Borrower vs. Capital Provider profiles? What are the pipeline stages for each side?
+
+---
+
+### F-002: Multi-Thread Relationship Tracking per Capital Provider
+
+- **Priority:** P0
+- **What the client said:** "We might be talking to one capital provider about five different deals or three different deals along with a JV partnership as a credit facility. That becomes complicated sometimes... Let's say we're currently negotiating a credit facility with [a provider]. But then on the side, there's also a singular deal that [they] really like. And in the interim, they want to fund that deal and see where it goes from there. And maybe we'll sign the paperwork for the credit facility two months from now. That's kind of annoying for a CRM to decipher between."
+- **Translated to a clear requirement:** The system must allow multiple concurrent "engagement threads" per Capital Provider. Each thread represents a distinct business context: a specific deal evaluation, a credit facility negotiation, or a JV partnership discussion. Each thread must have its own status, conversation history, and timeline — while all threads roll up to a single Capital Provider profile for a unified relationship view.
+- **Who uses this feature:** Deal Team, Capital Raising Team, CEO
+- **What triggers this feature:** User opens a Capital Provider record and views or creates engagement threads
+- **Expected output:** A Capital Provider profile page showing all active and historical engagement threads with their respective statuses, timelines, and conversation summaries
+- **Acceptance Criteria:**
+  1. A Capital Provider can have multiple simultaneous engagement threads (e.g., Deal A evaluation + Credit Facility negotiation)
+  2. Each thread has its own status, notes, and conversation history
+  3. A unified timeline view shows all interactions across threads in chronological order
+  4. Users can filter by thread type (deal-specific, credit facility, JV partnership)
+- **Dependencies:** F-001 (Dual-Sided Relationship Management)
+- **Open Questions:** How many concurrent threads does a typical capital provider have? What are the status stages for credit facility negotiations vs. deal evaluations?
+
+---
+
+### F-003: Capital Provider Type Classification (One-Off vs. Credit Facility Partner)
+
+- **Priority:** P0
+- **What the client said:** "We have capital providers [where] a lot of them work with us for just like one deal. And we have other capital providers that are effectively partners of ours that have programmatic [arrangements]... So they basically say to us, we'll open up our piggy bank for you. You have access to 200 million dollars a year. These are the terms... Versus sometimes we'll do a deal where the capital provider... they're just in that one deal and then that's it."
+- **Translated to a clear requirement:** The system must classify Capital Providers into at least two categories: (1) Transactional — involved in a single deal with no ongoing programmatic relationship, and (2) Credit Facility Partner — has a formal or in-progress credit facility agreement with defined terms (dollar amount, spread split, refinancing provisions). The system must store credit facility terms and link them to all deals funded under that facility.
+- **Who uses this feature:** Deal Team, Capital Raising Team
+- **What triggers this feature:** User categorizes a Capital Provider during creation or updates their classification as the relationship evolves
+- **Expected output:** Capital Provider records clearly labeled by type, with Credit Facility Partners showing facility terms, utilization, and associated deals
+- **Acceptance Criteria:**
+  1. Every Capital Provider record has a relationship type field (Transactional, Credit Facility Partner, Prospective Partner, or other)
+  2. Credit Facility Partner records include fields for facility size, term split, spread allocation, and refinancing provisions
+  3. The system can show how much of a credit facility has been utilized across deals
+- **Dependencies:** F-001
+- **Open Questions:** What specific terms are tracked in a credit facility agreement? Are there other relationship types beyond transactional and credit facility (e.g., JV partner, co-lender)? John mentioned life insurance companies as a category — is that a distinct type?
+
+---
+
+### F-004: Deal Pipeline & Status Tracking
+
+- **Priority:** P0
+- **What the client said:** "The sales side of it is the pressing part... there's two sides to the sales side. There's sales like we need to go find capital providers. But then there's also the sales side of like, we need to originate deals to bring to capital providers."
+- **Translated to a clear requirement:** The system must provide two distinct pipeline views: (1) a Deal Origination pipeline tracking borrower deals from initial contact through structuring to capital provider matching, and (2) a Capital Raising pipeline tracking outreach to capital providers for each deal from pitch through commitment. A single deal may appear in the Capital Raising pipeline multiple times if pitched to multiple capital providers.
+- **Who uses this feature:** All user types
+- **What triggers this feature:** A new deal is created or a deal is pitched to a capital provider
+- **Expected output:** Visual pipeline dashboards showing deals by stage, with the ability to drill into any deal for full detail
+- **Acceptance Criteria:**
+  1. Deals move through defined origination stages (e.g., Initial Contact → Underwriting → Structuring → Capital Matching → Funded)
+  2. Each deal can be linked to multiple capital provider pitches, each with its own status
+  3. Dashboard shows aggregate pipeline value and deal count by stage
+- **Dependencies:** F-001, F-002
+- **Open Questions:** What are the exact pipeline stages for deal origination? What are the stages for capital provider outreach per deal? What constitutes a "deal" at the earliest stage — a borrower inquiry?
+
+---
+
+### F-005: Deal Execution / Post-Agreement Task Management
+
+- **Priority:** P0
+- **What the client said:** "When it comes to deal management... we've come to agreement with the capital provider, we're gonna do X amount of money as a loan to borrower, has agreed to the terms, and now we have six to nine weeks to actually execute it, get everything plugged in, everything checked off... that process is some of the most annoying... we're talking hundreds of... anywhere from 8 to 15 different third party vendors that need to be brought in to get certain things done... managing those relationships, that's a whole new layer."
+- **Translated to a clear requirement:** The system must provide a deal execution workspace that activates once a deal moves to the execution phase. This workspace must include a checklist of all required tasks (appraisal, legal review, energy studies, municipal approvals, etc.), assignment of each task to a responsible party (internal team member or third-party vendor), status tracking per task, and a consolidated view showing overall deal execution progress. All team members must be able to see the status of every task in real time.
+- **Who uses this feature:** Deal Team
+- **What triggers this feature:** A deal moves from "Agreed" to "Execution" status
+- **Expected output:** A deal execution dashboard with a checklist of all required tasks, their assignments, statuses, and deadlines — with a progress indicator showing overall completion
+- **Acceptance Criteria:**
+  1. A deal in execution phase displays a configurable task checklist
+  2. Each task has an assignee, status (not started / in progress / blocked / complete), and due date
+  3. All team members with access can see real-time task status
+  4. Tasks can be assigned to third-party vendors (by name/company, even if they don't have system accounts)
+  5. The system flags overdue tasks
+- **Dependencies:** F-004
+- **Open Questions:** What is the standard checklist of tasks for deal execution? John said "we do [have documentation] but the process has changed" — the current process documentation must be obtained. Are there different checklists for different deal types (e.g., PACE deals vs. traditional)? How are third-party vendors currently tracked?
+
+---
+
+### F-006: Email Integration & Conversation Capture
+
+- **Priority:** P1
+- **What the client said:** "What if it's able to monitor email conversations and actually sweep things into the CRM? ... We might be talking to one capital provider about five different deals... like that becomes complicated."
+- **Translated to a clear requirement:** The system must integrate with the team's email (provider not specified) to automatically capture and associate email conversations with the relevant entity records (Borrower, Capital Provider) and engagement threads (specific deals, credit facility negotiations). At minimum, the system must pull in email metadata and content and allow users to associate emails with records. Ideally, AI-assisted classification would suggest which record/thread an email belongs to.
+- **Who uses this feature:** All user types
+- **What triggers this feature:** An email is sent or received by a team member that involves a known Borrower or Capital Provider
+- **Expected output:** Emails appear in the conversation history of the relevant entity record and engagement thread, providing a complete communication timeline alongside internal notes
+- **Acceptance Criteria:**
+  1. The system connects to the team's email provider and ingests email conversations
+  2. Emails can be manually or automatically associated with Borrower/Capital Provider records
+  3. Emails can be tagged to specific engagement threads (deals, credit facility negotiations)
+  4. A conversation timeline per entity shows all emails and internal notes in chronological order
+- **Dependencies:** F-001, F-002
+- **Open Questions:** What email provider does the team use (Gmail, Outlook, etc.)? Is two-way sync needed or read-only ingestion? Does the team want AI to auto-classify emails to the correct entity/thread, or is manual tagging acceptable for v1? Are there privacy/compliance concerns with storing email content?
+
+---
+
+### F-007: Centralized Document & Communication Hub
+
+- **Priority:** P1
+- **What the client said:** "You're trying to track all conversations of clients in one centralized platform. So you just keep a hold of all documentation. Right?"
+- **Translated to a clear requirement:** The system must serve as a centralized repository where all deal-related documents, communications, and notes are stored and accessible by entity (Borrower, Capital Provider) and by deal. Users must be able to upload, organize, and retrieve documents without searching through email or local file systems.
+- **Who uses this feature:** All user types
+- **What triggers this feature:** User uploads a document, the system ingests an email attachment, or a user creates an internal note
+- **Expected output:** A document library per deal and per entity, with search and filtering capabilities
+- **Acceptance Criteria:**
+  1. Documents can be uploaded and tagged to a specific deal, borrower, or capital provider
+  2. Users can search documents by name, type, entity, or deal
+  3. Internal notes can be added to any entity or deal record
+  4. Document history shows who uploaded what and when
+- **Dependencies:** F-001, F-004
+- **Open Questions:** What types of documents are most common (term sheets, appraisals, legal opinions, energy studies)? Is there a required folder structure? What is the expected volume of documents per deal?
+
+---
+
+### F-008: AI-Powered Follow-Up & Outreach Automation
+
+- **Priority:** P2
+- **What the client said:** "You can have AI even harass them... the AI chatbot, that's what I did for the other company... if the lead doesn't book an appointment, it'll harass them until they say unsubscribe." John also referenced municipalities not returning emails as a current pain point.
+- **Translated to a clear requirement:** The system must support automated follow-up sequences for unresponsive contacts — whether they are capital providers who haven't responded to a pitch, third-party vendors who haven't completed a task, or municipal contacts who haven't responded to required approvals. The system must allow users to configure follow-up cadences and templates, with AI-generated personalized follow-up messages.
+- **Who uses this feature:** Deal Team, Capital Raising Team
+- **What triggers this feature:** A contact has not responded within a configurable time window, or a task is overdue
+- **Expected output:** Automated follow-up emails or notifications sent on a defined cadence, with the ability for users to review before sending or set to auto-send
+- **Acceptance Criteria:**
+  1. Users can configure follow-up sequences with customizable timing and messaging
+  2. The system auto-generates follow-up messages based on context (deal details, last communication)
+  3. Users can review and approve or auto-send follow-ups
+  4. Contacts can opt out / unsubscribe
+- **Dependencies:** F-006 (Email Integration)
+- **Open Questions:** Does the team want fully automated sending or human-in-the-loop approval? What channels (email only, or also SMS/phone)? Are there compliance restrictions on automated outreach in the private credit space?
+
+---
+
+### F-009: Zoho CRM Integration
+
+- **Priority:** P1
+- **What the client said:** "The CRM that we use is Zoho... CRM wise, we're still integrating the Zoho, which has been its own [nightmare]... I know that our [partners] don't wanna leave [Zoho] right now."
+- **Translated to a clear requirement:** The system must integrate with the team's existing Zoho CRM instance. This may be bidirectional sync (keeping Zoho as the system of record for certain data while the new platform handles deal management and relationship intelligence) or one-way (pulling contact and deal data from Zoho into the new system). The team is not willing to abandon Zoho immediately, so the new system must coexist with it.
+- **Who uses this feature:** All user types (indirect — the integration runs in the background)
+- **What triggers this feature:** Data changes in either system trigger sync
+- **Expected output:** Contact records, deal data, and relationship information stay consistent between Zoho and the new platform
+- **Acceptance Criteria:**
+  1. Contact records sync between Zoho and the new platform
+  2. Deal records created in either system are reflected in both
+  3. No duplicate records are created by the sync process
+  4. Sync errors are logged and surfaced to an admin
+- **Dependencies:** Zoho API access and documentation
+- **Open Questions:** What data currently lives in Zoho? What is the source of truth for each data type? Does the team want Zoho to remain primary or transition to the new system over time? Does Zoho have open API access? What Zoho plan are they on (API limits vary by plan)?
+
+---
+
+### F-010: Standardized Process Templates
+
+- **Priority:** P1
+- **What the client said:** "We're so early on at this point that the process has changed... everyone's kinda got their own idea of how it should be done... that should just be a yes for me, but it's not right now."
+- **Translated to a clear requirement:** The system must support configurable process templates that define the standard sequence of steps, tasks, and checkpoints for recurring workflows (deal origination, deal execution, capital provider onboarding, credit facility negotiation). These templates must be enforceable — when a new deal enters a phase, the template auto-generates the required tasks and assignments.
+- **Who uses this feature:** Deal Team, CEO/Leadership (for configuration)
+- **What triggers this feature:** A deal enters a new phase, or an admin creates/modifies a process template
+- **Expected output:** A library of process templates that auto-populate tasks when applied to a deal
+- **Acceptance Criteria:**
+  1. Admins can create and edit process templates with defined steps, default assignees, and relative deadlines
+  2. When a deal enters a phase, the corresponding template auto-generates tasks
+  3. Templates can be versioned (old deals keep their original template, new deals get the current version)
+- **Dependencies:** F-005 (Deal Execution Task Management)
+- **Open Questions:** How many distinct process templates are needed? Who has authority to modify templates?
+
+---
+
+## SECTION 5: WHAT THE SOFTWARE MUST NOT DO (EXPLICIT SCOPE BOUNDARIES)
+
+### Explicitly Out of Scope:
+
+1. **Own-money asset management** — John stated "we don't oversee our own money at the moment. We're gonna get to that point probably in the next year or two." Portfolio management functionality is not in scope.
+2. **Financial modeling / underwriting tools** — John acknowledged that most AI development in their industry has focused on financial modeling, but that is not what this platform addresses. This platform is for relationship and deal process management, not modeling.
+3. **Replacing Zoho entirely** — The team is not ready to leave Zoho. The system must coexist with it, not replace it.
+
+### Implicitly Out of Scope:
+
+1. **External-facing borrower portal** — The transcript only discussed internal team use. A portal where borrowers can submit applications or check deal status was not discussed and would expand scope significantly.
+2. **Investor reporting / LP dashboards** — No discussion of reporting to outside investors or limited partners.
+3. **Accounting / invoicing** — No discussion of tracking fees, invoices, or revenue recognition.
+4. **Mobile app** — No discussion of mobile-specific requirements. Assuming browser-based.
+
+### Future Phase Candidates:
+
+1. **AI-powered financial modeling integration** — John mentioned "there are expensive AI programs that are strategically built for commercial real estate modeling" and that the team is debating whether to buy one or build something with Claude/AI. This could become a future module.
+2. **Own-money portfolio management** — When the firm begins managing its own capital in 1-2 years, the platform may need to expand.
+3. **Vendor portal** — Giving third-party vendors (appraisers, law firms) limited access to update their task status directly rather than through the deal team.
+
+---
+
+## SECTION 6: USER WORKFLOWS (HOW PEOPLE ACTUALLY USE IT)
+
+### Workflow 1: New Borrower Deal Origination
+
+- **Trigger:** A borrower approaches the firm about financing a project (hotel, infrastructure, mining, etc.)
+- **Step 1:** User creates a Borrower record (or selects existing) and creates a new Deal record linked to that Borrower
+- **Step 2:** User enters deal details — project type, location, estimated deal size, financing structure (% traditional mortgage vs. % PACE/public financing)
+- **Step 3:** System places the deal in the origination pipeline at the first stage
+- **Step 4:** User identifies and links appropriate Capital Providers to pitch
+- **Step 5:** For each Capital Provider pitched, system creates an engagement thread on that Capital Provider's record
+- **Step 6:** User tracks responses — Capital Provider says yes, no, or needs more info
+- **Step 7:** When a Capital Provider commits, deal moves to "Agreed" and triggers the execution workflow
+- **End State:** Deal has a committed Capital Provider and is ready for execution
+- **Error States:** Capital Provider says no (deal needs to be pitched to others); Borrower withdraws; PACE/public financing program is not available in the municipality (this is a real risk — John described this happening on a current deal)
+
+### Workflow 2: Deal Execution (Post-Agreement)
+
+- **Trigger:** Deal moves from "Agreed" to "Execution" phase
+- **Step 1:** System auto-generates the execution task checklist from the process template (appraisal, legal, energy study, municipal approval, etc.)
+- **Step 2:** User assigns each task to a responsible party (internal team member or third-party vendor name)
+- **Step 3:** As tasks are completed, users update status; system shows overall progress
+- **Step 4:** System flags overdue tasks and optionally triggers automated follow-ups
+- **Step 5:** When all tasks are complete, deal moves to "Ready to Fund"
+- **Step 6:** Deal is funded; system records closing details
+- **End State:** Deal is funded and closed; all documentation is stored in the deal record
+- **Error States:** Vendor is unresponsive (follow-up automation triggers); municipality rejects approval (deal may need to be restructured or killed); appraisal comes in below expected value; deal "blows up" (John's words — needs a termination workflow)
+
+### Workflow 3: Credit Facility Negotiation
+
+- **Trigger:** Team identifies a Capital Provider as a potential credit facility partner
+- **Step 1:** User creates a Credit Facility engagement thread on the Capital Provider's record
+- **Step 2:** User tracks negotiation stages — initial conversation, terms proposed, terms negotiated, legal review, signed
+- **Step 3:** When facility is signed, user records facility terms (dollar amount, spread split, refinancing provisions, duration)
+- **Step 4:** Future deals funded under this facility are linked to it; system tracks utilization
+- **End State:** Active credit facility with terms recorded and utilization tracked
+- **Error States:** Negotiation stalls; terms change; facility is terminated
+
+### Workflows Not Discussed But Likely Needed:
+
+1. **Deal Cancellation / Kill** — John mentioned a current deal might "blow up." There is no described workflow for what happens when a deal dies mid-execution.
+2. **Capital Provider Onboarding** — When a new capital provider is identified, what information is collected? Is there a due diligence process?
+3. **Reporting / Dashboard Refresh** — How does leadership consume pipeline data? No workflow described for generating or reviewing reports.
+4. **User Onboarding / Permissions** — No discussion of how new team members are added or what access levels they get.
+
+---
+
+## SECTION 7: INTEGRATIONS AND EXTERNAL SYSTEMS
+
+### Integration 1: Zoho CRM
+
+- **System Name:** Zoho CRM
+- **Why:** Zoho is the team's existing CRM. Integration is needed to sync contacts, basic deal info, and avoid duplicate data entry during the transition period.
+- **Direction:** Bidirectional (likely — to be confirmed)
+- **What data moves:** Contact records (borrowers, capital providers), deal records, basic pipeline status
+- **Client's current relationship:** Actively using Zoho; still in the process of integrating/configuring it. "CRM wise, we're still integrating the Zoho, which has been its own [nightmare]."
+- **Constraints:** Team does not want to leave Zoho right now. The new system must coexist.
+- **Open Questions:** What Zoho plan are they on? What data is currently in Zoho vs. in email/spreadsheets? Does Zoho have API access enabled? Who is the Zoho admin?
+
+### Integration 2: Email Provider (Unknown)
+
+- **System Name:** Gmail, Outlook, or other — not specified in the transcript
+- **Why:** To capture email conversations and associate them with entity records and deal threads
+- **Direction:** Inbound (read emails into the system); possibly outbound (send follow-ups from the system)
+- **What data moves:** Email metadata (sender, recipient, subject, date), email body content, attachments
+- **Client's current relationship:** Unknown — email provider not discussed
+- **Constraints:** None discussed
+- **Open Questions:** What email provider does the team use? Is it individual accounts or a shared domain? Are there compliance requirements around email storage/access in private credit?
+
+### Integration 3: PACE/Public Financing Program Databases (Future)
+
+- **System Name:** Municipal and state PACE program databases
+- **Why:** To verify whether a municipality has opted into the relevant public financing program before a deal is structured. John described a current deal failing because a town hadn't actually opted in.
+- **Direction:** One-way inbound (lookup)
+- **What data moves:** Municipality opt-in status for specific programs
+- **Client's current relationship:** Currently verified manually
+- **Constraints:** Government databases may not have APIs
+- **Open Questions:** Which specific programs (PACE, C-PACE, other)? Which states? Is there a central database or is it state-by-state?
+
+---
+
+## SECTION 8: DATA — WHAT THE SYSTEM NEEDS TO STORE AND MANAGE
+
+### Data Entity 1: Borrower
+
+- **Key Fields:** Company/individual name, contact info, project type, location, deal history
+- **Who creates it:** Deal Team
+- **Who reads it:** All user types
+- **Who updates it:** Deal Team
+- **Who deletes it:** Likely never deleted — archived
+- **Relationships:** A Borrower has many Deals
+- **Volume:** Not specified — the firm is 14 months old, so likely dozens to low hundreds
+- **Sensitivity:** Contains business information and project details — likely confidential but not PII in the regulatory sense
+
+### Data Entity 2: Capital Provider
+
+- **Key Fields:** Firm name, contact person(s), type (bank, asset manager, family office, life insurance company), relationship type (transactional, credit facility partner, prospective), credit facility terms (if applicable), deal history, engagement threads
+- **Who creates it:** Capital Raising Team
+- **Who reads it:** All user types
+- **Who updates it:** Capital Raising Team, Deal Team
+- **Who deletes it:** Likely never deleted — archived
+- **Relationships:** A Capital Provider has many Deals (through engagement threads); a Capital Provider may have one or more Credit Facilities
+- **Volume:** Not specified — John mentioned working with entities like JP Morgan, Aries Capital Management, Fortress, family offices, and life insurance companies. Likely dozens to low hundreds.
+- **Sensitivity:** Contains relationship details, facility terms, and negotiation history — highly confidential
+
+### Data Entity 3: Deal
+
+- **Key Fields:** Deal name/ID, borrower, project type, location, total deal size, financing structure (% traditional vs. % public/PACE), pipeline stage, linked capital providers, execution task checklist, status, key dates
+- **Who creates it:** Deal Team
+- **Who reads it:** All user types
+- **Who updates it:** Deal Team
+- **Who deletes it:** Likely never deleted — archived or marked as killed
+- **Relationships:** A Deal belongs to one Borrower; a Deal has many Capital Provider engagement threads; a Deal has many Tasks; a Deal may be funded under a Credit Facility
+- **Volume:** John mentioned a $90 million deal last October. The firm likely has a handful of active deals at any time given their size and deal complexity.
+- **Sensitivity:** Highly confidential — contains financial terms, pricing, and counterparty information
+
+### Data Entity 4: Credit Facility
+
+- **Key Fields:** Capital Provider, facility size (e.g., $200M/year), term structure, spread split (e.g., 60/40), refinancing provisions, status, utilization (how much has been drawn)
+- **Who creates it:** Capital Raising Team
+- **Who reads it:** All user types
+- **Who updates it:** Capital Raising Team, Deal Team
+- **Who deletes it:** Never deleted
+- **Relationships:** A Credit Facility belongs to one Capital Provider; a Credit Facility has many Deals funded under it
+- **Volume:** Low — likely single digits
+- **Sensitivity:** Extremely confidential — contains partnership terms and financial commitments
+
+### Data Entity 5: Task (Deal Execution)
+
+- **Key Fields:** Task name, description, deal, assignee (internal or vendor name), status, due date, completion date, notes
+- **Who creates it:** System (auto-generated from template) or Deal Team (manual)
+- **Who reads it:** Deal Team, CEO
+- **Who updates it:** Deal Team
+- **Who deletes it:** Deal Team (or archived when deal closes)
+- **Relationships:** A Task belongs to one Deal; a Task may be assigned to one Third-Party Vendor
+- **Volume:** 8-15 tasks per deal in execution
+- **Sensitivity:** Moderate — contains vendor names and deal-specific requirements
+
+### Data Entity 6: Third-Party Vendor
+
+- **Key Fields:** Company name, contact person, service type (appraiser, law firm, energy consultant, etc.), contact info, deal history
+- **Who creates it:** Deal Team
+- **Who reads it:** Deal Team
+- **Who updates it:** Deal Team
+- **Who deletes it:** Likely never deleted
+- **Relationships:** A Vendor has many Tasks across many Deals
+- **Volume:** John mentioned 8-15 different vendor types per deal
+- **Sensitivity:** Low — basic business contact information
+
+### Data Entity 7: Communication / Conversation Record
+
+- **Key Fields:** Date, participants, channel (email, phone, in-person), content/summary, linked entity (Borrower, Capital Provider, Vendor), linked deal, linked engagement thread
+- **Who creates it:** System (via email integration) or Deal Team (manual notes)
+- **Who reads it:** All user types
+- **Who updates it:** Rarely updated after creation
+- **Who deletes it:** Likely never deleted
+- **Relationships:** A Communication belongs to one or more entities and optionally to a Deal/Thread
+- **Volume:** High — potentially dozens of communications per deal per week
+- **Sensitivity:** May contain confidential deal terms, negotiation positions, and business strategy
+
+### Data Not Discussed But Likely Needed:
+
+- **User / Team Member records** — Authentication, permissions, role assignments
+- **Audit Log** — Who changed what and when (critical for financial services)
+- **Document/File metadata** — For the centralized document repository
+- **Notification preferences** — Per user settings for how they want to be alerted
+
+---
+
+## SECTION 9: NON-FUNCTIONAL REQUIREMENTS
+
+### Performance:
+
+- **Expected response times:** Not discussed. Recommended default: pages load in under 2 seconds; search returns results in under 3 seconds.
+- **Expected concurrent users:** Small team — John mentioned approximately 14 months of operation with a small team. Likely under 20 concurrent users. Must be confirmed.
+- **Expected data volume:** Low in the near term — dozens of deals, hundreds of contacts, thousands of communications. Growth trajectory unclear.
+
+### Availability and Reliability:
+
+- **Uptime expectations:** Not discussed. Recommended default: 99.5% uptime during business hours (US Eastern, US Pacific, possibly others given deals in Massachusetts, Texas, Florida).
+- **What happens during downtime:** Not discussed. Team presumably falls back to email and Zoho.
+- **Disaster recovery:** Not discussed. Must be addressed given the sensitivity of the data.
+
+### Security:
+
+- **Authentication:** Not discussed. Recommended: email/password with MFA at minimum. SSO if the firm uses a provider.
+- **Authorization/Roles:** Not explicitly discussed, but implied by the multi-user team structure. At minimum: Admin, Deal Team, Read-Only.
+- **Data protection:** John/Zack explicitly stated "data security in private credit is priority number one." Encryption at rest and in transit is mandatory. Compliance requirements (SOC2, etc.) must be clarified.
+- **Audit trails:** Not explicitly discussed but strongly implied by the financial services context. The system must log who accessed, created, modified, or deleted any record.
+
+### Scalability:
+
+- **Current scale:** Small — approximately 14 months of operation, small team, handful of active deals
+- **Expected growth:** Not quantified. John mentioned "we're gonna get to [managing our own money] probably in the next year or two," implying growth in deal volume and team size.
+- **Scaling concerns:** None explicitly raised
+
+### Platform and Device:
+
+- **Web, mobile, desktop:** Not discussed. Zack mentioned "a URL, they log into it" suggesting browser-based. Recommended: responsive web application.
+- **Specific browsers or devices:** Not discussed
+- **Offline capability:** Not discussed — unlikely to be needed
+
+---
+
+## SECTION 10: NOTIFICATIONS AND COMMUNICATION
+
+### Notification 1: Overdue Task Alert
+
+- **What triggers it:** A deal execution task passes its due date without being marked complete
+- **Who receives it:** The task assignee and the deal lead
+- **Channel:** Not discussed — recommend in-app notification + email
+- **Content:** Task name, deal name, days overdue, assignee
+- **Timing:** Immediately upon becoming overdue, then daily until resolved
+- **Priority:** P0
+
+### Notification 2: Capital Provider Response Received
+
+- **What triggers it:** An email from a capital provider is captured and associated with a deal/thread
+- **Who receives it:** The deal team member managing that relationship
+- **Channel:** In-app notification
+- **Content:** Capital provider name, deal name, email preview
+- **Timing:** Immediately
+- **Priority:** P1
+
+### Notification 3: Follow-Up Reminder
+
+- **What triggers it:** No response from a contact within a configurable time window
+- **Who receives it:** The team member managing that relationship
+- **Channel:** In-app notification + optional automated email to the contact (P2)
+- **Content:** Contact name, entity name, days since last communication, suggested follow-up
+- **Timing:** Configurable (e.g., 3 days, 7 days after last outreach)
+- **Priority:** P1
+
+### Notification 4: Deal Stage Change
+
+- **What triggers it:** A deal moves to a new pipeline stage (especially "Agreed" → "Execution" and "Ready to Fund")
+- **Who receives it:** All team members on the deal + CEO
+- **Channel:** In-app notification + email
+- **Content:** Deal name, old stage, new stage, updated by whom
+- **Timing:** Immediately
+- **Priority:** P1
+
+*Note: The transcript did not explicitly discuss notifications. All of the above are inferred from the described workflows and must be validated with the team.*
+
+---
+
+## SECTION 11: REPORTING AND ANALYTICS
+
+### Report/Dashboard 1: Deal Pipeline Overview
+
+- **Name:** Active Deal Pipeline
+- **Who views it:** CEO, Deal Team
+- **Key metrics:** Number of deals by stage, total pipeline value, deals by geography, deals by financing type (PACE vs. traditional blend)
+- **Filters:** Stage, date range, deal type, geography
+- **Frequency:** Real-time
+- **Export capability:** Not discussed
+- **Priority:** P1
+
+### Report/Dashboard 2: Capital Provider Relationship Summary
+
+- **Name:** Capital Provider Landscape
+- **Who views it:** Capital Raising Team, CEO
+- **Key metrics:** Number of active capital providers by type, credit facility utilization, deals pitched vs. committed, response rates
+- **Filters:** Provider type, relationship status, deal involvement
+- **Frequency:** Real-time
+- **Export capability:** Not discussed
+- **Priority:** P1
+
+### Report/Dashboard 3: Deal Execution Progress
+
+- **Name:** Deal Execution Tracker
+- **Who views it:** Deal Team, CEO
+- **Key metrics:** Tasks complete vs. outstanding per deal, overdue tasks, vendor responsiveness, days in execution
+- **Filters:** Deal, assignee, task status, vendor
+- **Frequency:** Real-time
+- **Export capability:** Not discussed
+- **Priority:** P1
+
+*Note: The transcript did not explicitly discuss specific reports or dashboards. These are inferred from the described workflows. The team mentioned wanting to track KPIs of "how much the systems are actually improving your team's productivity" — this suggests interest in efficiency metrics that should be defined post-launch.*
+
+---
+
+## SECTION 12: CONSTRAINTS AND HARD LIMITATIONS
+
+1. **Must coexist with Zoho CRM** — The team is not willing to abandon Zoho right now. The new system must integrate with it, not replace it. "I know that our [partners] don't wanna leave [Zoho] right now."
+2. **Team is not technical** — The entire team comes from leveraged finance and investment backgrounds. The UI must be intuitive for non-technical users. "Our whole team comes from heavy investment entities and leveraged finance backgrounds. They're so used to everything being structured for them."
+3. **Data security is the top priority** — "Data security in private credit is priority number one." Any solution must meet the security expectations of a financial services firm handling confidential deal data.
+4. **Small team, startup budget** — The firm is only 14 months old. The solution must be cost-appropriate for an early-stage firm.
+5. **Must handle the complexity of their business model** — Simple lead-to-client CRM logic is explicitly insufficient. The system must natively support the borrower/capital-provider duality and multi-threaded relationships.
+
+---
+
+## SECTION 13: ASSUMPTIONS
+
+1. **Assuming browser-based web application** — No mobile app or desktop application was discussed. The reference to "a URL, they log into it" suggests web-based.
+2. **Assuming email-based authentication** — SSO was not discussed. Defaulting to email/password with MFA.
+3. **Assuming the team uses Gmail or Outlook** — Email provider was never specified. Email integration approach depends on this.
+4. **Assuming US-only operations and time zones** — Deals mentioned were in Massachusetts, Texas, and Florida. No international deals were discussed.
+5. **Assuming English-only interface** — No other languages were mentioned.
+6. **Assuming the team size is under 20 people** — John said the firm was formed by two co-founders merging their firms, has been operating 14 months, and he is the youngest at 29. No headcount was given.
+7. **Assuming Zoho has API access available** — Integration depends on Zoho plan and API availability, which was not confirmed.
+8. **Assuming the "process documentation" John referenced can be obtained** — He said "we do [have documentation]" but also "the process has changed." The quality and completeness of this documentation is unknown.
+9. **Assuming no regulatory compliance certifications are required for launch** — SOC2, FINRA, or other compliance frameworks were not discussed, but given the financial services context, this assumption is risky and must be validated immediately.
+
+---
+
+## SECTION 14: OPEN QUESTIONS (MUST BE ANSWERED BEFORE ENGINEERING BEGINS)
+
+**OQ-001:** What email provider does the team use?
+- **Why this matters:** Email integration architecture depends entirely on whether it's Gmail (Google API), Outlook (Microsoft Graph API), or something else.
+- **Owner:** Client (John)
+- **Deadline:** Before development begins
+- **Default if unanswered:** Build Gmail integration first (most common)
+
+**OQ-002:** What are the exact pipeline stages for (a) deal origination and (b) capital provider outreach?
+- **Why this matters:** The pipeline views and status tracking cannot be built without defined stages.
+- **Owner:** Client (John + CEO)
+- **Deadline:** Before development begins
+- **Default if unanswered:** Use generic stages (Prospect → Qualifying → Structuring → Pitched → Committed → Execution → Funded → Closed) and iterate
+
+**OQ-003:** What is the standard deal execution checklist?
+- **Why this matters:** The task management and process template features depend on knowing what tasks are required.
+- **Owner:** Client (John — he said documentation exists but has changed)
+- **Deadline:** Before Phase 1 development begins
+- **Default if unanswered:** Build a configurable checklist framework and populate it collaboratively during onboarding
+
+**OQ-004:** What Zoho plan is the team on, and does it have API access?
+- **Why this matters:** Integration scope and feasibility depend on Zoho's API availability and rate limits.
+- **Owner:** Client (whoever manages Zoho)
+- **Deadline:** Before integration work begins
+- **Default if unanswered:** Build the platform standalone first, add Zoho integration in Phase 2
+
+**OQ-005:** Are there regulatory compliance requirements (SOC2, FINRA, state-level) that the software must meet?
+- **Why this matters:** Compliance requirements affect architecture, hosting, audit logging, and data handling from day one. Retrofitting compliance is expensive.
+- **Owner:** Client (CEO / legal)
+- **Deadline:** Before architecture decisions are finalized
+- **Default if unanswered:** Build with SOC2-ready practices (encryption, audit logging, access controls) as a precaution
+
+**OQ-006:** How many people are on the team, and what are their specific roles?
+- **Why this matters:** Determines user roles, permissions structure, and expected concurrent usage.
+- **Owner:** Client (John)
+- **Deadline:** Before development begins
+- **Default if unanswered:** Design for under 20 users with three role levels (Admin, Deal Team, Read-Only)
+
+**OQ-007:** What specific fields and terms are tracked in a credit facility agreement?
+- **Why this matters:** The Credit Facility data entity cannot be designed without knowing what terms need to be stored.
+- **Owner:** Client (deal team)
+- **Deadline:** Before F-003 development begins
+- **Default if unanswered:** Start with facility size, annual allocation, spread split, term length, and add fields iteratively
+
+**OQ-008:** Does the team want the new system to eventually replace Zoho or permanently coexist?
+- **Why this matters:** This determines whether the integration is a bridge (temporary sync during migration) or a permanent architectural component.
+- **Owner:** Client (CEO / leadership)
+- **Deadline:** Before Phase 2 planning
+- **Default if unanswered:** Build as if Zoho will be replaced eventually, but maintain the integration until explicitly told otherwise
+
+**OQ-009:** What third-party vendor types are involved in deal execution, and do any of them need system access?
+- **Why this matters:** If vendors need to update task status directly, a vendor portal must be scoped. If not, the deal team updates status on their behalf.
+- **Owner:** Client (deal team)
+- **Deadline:** Before Phase 1 development begins
+- **Default if unanswered:** Deal team updates vendor task status manually in v1
+
+**OQ-010:** What are the different deal types, and do they have different workflows?
+- **Why this matters:** A PACE-financed deal likely has different execution requirements (energy studies, municipality approval) than a purely traditional deal.
+- **Owner:** Client (deal team)
+- **Deadline:** Before process template design
+- **Default if unanswered:** Build one flexible template and customize per deal type later
+
+---
+
+## SECTION 15: RISKS
+
+**R-001: Zoho integration complexity**
+- **Likelihood:** Medium
+- **Impact:** Medium
+- **What happens if it occurs:** If Zoho's API is limited or poorly documented, integration could take significantly longer than expected, or certain data sync scenarios may not be possible.
+- **Mitigation plan:** Investigate Zoho API capabilities early. Build the platform to function standalone if integration is delayed.
+- **Owner:** Engineering lead
+
+**R-002: Process documentation is incomplete or inaccurate**
+- **Likelihood:** High
+- **Impact:** Medium
+- **What happens if it occurs:** The deal execution checklist and process templates will be based on incomplete information, requiring significant iteration.
+- **Mitigation plan:** Schedule working sessions with deal team members to map processes in detail. John said "everyone's kinda got their own idea of how it should be done" — expect disagreement and plan for facilitation.
+- **Owner:** Product lead / Zack
+
+**R-003: Team adoption resistance**
+- **Likelihood:** Medium
+- **Impact:** High
+- **What happens if it occurs:** The team comes from traditional finance backgrounds and is not technical. If the software is not intuitive or if it adds friction to their existing workflows, adoption will fail.
+- **Mitigation plan:** Involve team members in every feedback cycle. Design UI for non-technical users. Start with the highest-pain workflows (deal execution tracking) to demonstrate immediate value.
+- **Owner:** Product lead / Zack
+
+**R-004: Data security requirements are higher than anticipated**
+- **Likelihood:** Medium
+- **Impact:** High
+- **What happens if it occurs:** If the firm is subject to FINRA, SEC, or state-level data handling requirements, the platform may need compliance certifications that are expensive and time-consuming to obtain.
+- **Mitigation plan:** Ask OQ-005 immediately. Build with encryption, audit logging, and access controls from the start regardless.
+- **Owner:** Client (legal) + Engineering
+
+**R-005: CEO gatekeeping / USC hiring preference**
+- **Likelihood:** Medium
+- **Impact:** High
+- **What happens if it occurs:** John mentioned the CEO "always says she'll go get one of her students from New York City [USC]." If the CEO is not bought in, the project may never get formal approval.
+- **Mitigation plan:** The demo prototype approach is the right strategy — show tangible value before asking for commitment. John said he will "float [Zack's] name" to the founders.
+- **Owner:** John (internal champion)
+
+**R-006: Scope creep from the two-sided business model**
+- **Likelihood:** High
+- **Impact:** Medium
+- **What happens if it occurs:** The borrower side and capital provider side each have their own complexity. Trying to build both simultaneously could delay delivery.
+- **Mitigation plan:** Phase the build — start with capital provider relationship management and deal pipeline (the area John expressed the most pain), then add borrower-side features.
+- **Owner:** Product lead / Zack
+
+---
+
+## SECTION 16: MILESTONES AND DELIVERY PHASES
+
+### Phase 1 — Minimum Viable Product (MVP)
+
+- **What's included:** F-001 (Dual-Sided Relationship Management), F-002 (Multi-Thread Relationship Tracking), F-003 (Capital Provider Type Classification), F-004 (Deal Pipeline & Status Tracking), F-005 (Deal Execution Task Management)
+- **What's the end state:** The team can create Borrower and Capital Provider records, track deals through a defined pipeline, manage multi-threaded relationships with capital providers, and use a checklist-based execution tracker for deals in progress. No email integration yet — all data entry is manual.
+- **Target timeline:** Not specified by client. Prototype/demo to be delivered ASAP per conversation; functional MVP timeline TBD after team buy-in.
+- **What's explicitly NOT in Phase 1:** Email integration, Zoho sync, AI automation, document management, reporting dashboards
+
+### Phase 2 — Core Enhancement
+
+- **What's included:** F-006 (Email Integration), F-007 (Document Hub), F-009 (Zoho Integration), F-010 (Process Templates)
+- **What's the end state:** The system captures email conversations, stores documents centrally, syncs with Zoho, and auto-generates task checklists from templates. The team's workflow shifts from manual data entry to system-assisted tracking.
+- **Dependencies on Phase 1:** All Phase 2 features build on the entity and deal structures created in Phase 1
+
+### Phase 3 — Full Feature Set
+
+- **What's included:** F-008 (AI-Powered Follow-Up Automation), reporting dashboards (Section 11), advanced analytics, potential financial modeling integration
+- **What's the end state:** Full vision realized — the platform is the central nervous system for deal origination, capital raising, relationship management, and deal execution with AI-assisted automation
+- **Dependencies on Phase 2:** AI automation requires email integration; dashboards require data from all prior phases
+
+---
+
+## SECTION 17: SUCCESS CRITERIA
+
+### Success Metric 1: Relationship Context Retrieval Time
+
+- **Metric Name:** Time to retrieve full relationship context for a capital provider
+- **Current Baseline:** Unknown — currently requires searching through email threads and Zoho records manually. Likely 15-30+ minutes to reconstruct the full picture.
+- **Target After Launch:** Under 60 seconds — open the Capital Provider record and see all deals, threads, conversations, and facility terms in one view
+- **How to Measure:** User testing / time-on-task measurement during onboarding
+- **Timeframe:** 30 days after Phase 1 launch
+
+### Success Metric 2: Deal Execution Visibility
+
+- **Metric Name:** Percentage of deal execution tasks with a clear status visible to all team members
+- **Current Baseline:** Near 0% — John said everyone has their own process and there is no centralized tracking
+- **Target After Launch:** 100% of tasks for active deals are tracked in the system with current status
+- **How to Measure:** Audit active deals in the system monthly
+- **Timeframe:** 60 days after Phase 1 launch
+
+### Success Metric 3: Zoho Workaround Reduction
+
+- **Metric Name:** Number of times team members cite Zoho limitations as blocking their workflow
+- **Current Baseline:** Frequent — John described the Zoho limitations as the core problem
+- **Target After Launch:** Zero — the new system handles all relationship complexity that Zoho cannot
+- **How to Measure:** Qualitative feedback in weekly check-ins
+- **Timeframe:** 90 days after Phase 2 launch
+
+---
+
+## SECTION 18: GLOSSARY
+
+- **PACE (C-PACE):** Property Assessed Clean Energy — a public financing mechanism that allows property owners to finance energy-efficient and sustainable building improvements through long-term, low-interest debt that is assessed on the property. Requires municipality opt-in.
+- **Credit Facility:** A formal agreement with a capital provider that gives the firm access to a defined pool of capital (e.g., $200M/year) under pre-agreed terms, allowing them to fund multiple deals without negotiating each one individually.
+- **Capital Provider:** Any entity that provides money for deals — includes banks, asset managers (Fortress, Aries Capital Management), family offices, and life insurance companies.
+- **Borrower:** The entity seeking financing — could be a hotel developer, infrastructure company, mining operation, or any commercial real estate project.
+- **Credit Facility Partner vs. Transactional Capital Provider:** A Credit Facility Partner has an ongoing programmatic relationship with pre-agreed terms. A Transactional Capital Provider participates in a single deal with no ongoing commitment.
+- **Spread:** The margin/fee added on top of the base interest rate on a loan. The spread split (e.g., 60/40) defines how origination revenue is shared between the firm and the capital provider.
+- **Origination:** The process of sourcing, structuring, and funding a new deal.
+- **Underwriting:** The process of evaluating the risk and terms of a potential deal.
+- **JV (Joint Venture):** A partnership between two or more parties for a specific business purpose. The firm itself was formed as a JV with Wedbush Securities.
+- **Wedbush Securities:** A Los Angeles-headquartered investment bank that is the firm's JV partner. Provides office space and some infrastructure.
+- **SIE (Securities Industry Essentials):** An entry-level FINRA exam — discussed in the transcript in the context of career advice, not relevant to the software.
+- **Loan-on-Loan Financing:** When a private credit firm borrows money from a bank to then lend it out to borrowers — the structure described by John as the origin of private credit.
+- **RIA:** Registered Investment Advisor — a type of financial firm. Referenced when John discussed Red Tail CRM (used by wealth management RIAs), not directly relevant to this build.
+- **Go High Level:** A CRM/marketing automation platform that Zack used for a previous client (tax resolution company). Referenced as a comparable, not as a tool for this project.
+- **Linear:** A project management tool for software development. Zack uses it internally for his company Licom AI. Not proposed for the client's use.
+
+---
+
+## SECTION 19: REFERENCE LINKS AND ATTACHMENTS
+
+- Link to original transcript recording: Not provided — transcript was text only
+- Link to any documents, screenshots, or files the client shared: None shared during the call
+- Link to existing system the client demonstrated or referenced: Zoho CRM instance (access not provided)
+- Link to relevant API documentation for integrations: Zoho CRM API documentation (to be obtained)
+- Client's existing process documentation: John confirmed it exists but needs to be requested — "We do [have documentation]. We're so early on at this point that the process has changed a little."
+- Licom AI demo CRM (for client reference): Zack to send John login credentials for the tax company CRM build as a reference for build quality
+- Wedbush Securities: JV partner — headquartered in Pasadena, CA (office in LA)
+
+---
+
+**END OF BLUEPRINT**

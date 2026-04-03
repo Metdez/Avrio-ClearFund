@@ -1,0 +1,58 @@
+import type { User } from "@/types";
+
+export const users: User[] = [
+  {
+    id: "usr-001",
+    name: "Marcus Webb",
+    email: "marcus.webb@avriocleanfund.com",
+    role: "Admin",
+    isActive: true,
+    lastLoginAt: "2026-04-02T08:15:00Z",
+    createdAt: "2025-06-01T09:00:00Z",
+  },
+  {
+    id: "usr-002",
+    name: "Sarah Chen",
+    email: "sarah.chen@avriocleanfund.com",
+    role: "Deal Team",
+    isActive: true,
+    lastLoginAt: "2026-04-02T09:30:00Z",
+    createdAt: "2025-07-15T10:00:00Z",
+  },
+  {
+    id: "usr-003",
+    name: "James Rodriguez",
+    email: "james.rodriguez@avriocleanfund.com",
+    role: "Deal Team",
+    isActive: true,
+    lastLoginAt: "2026-04-01T16:45:00Z",
+    createdAt: "2025-08-01T09:00:00Z",
+  },
+  {
+    id: "usr-004",
+    name: "Priya Patel",
+    email: "priya.patel@avriocleanfund.com",
+    role: "Deal Team",
+    isActive: true,
+    lastLoginAt: "2026-04-02T07:50:00Z",
+    createdAt: "2025-09-10T09:00:00Z",
+  },
+  {
+    id: "usr-005",
+    name: "David Kim",
+    email: "david.kim@avriocleanfund.com",
+    role: "Deal Team",
+    isActive: true,
+    lastLoginAt: "2026-04-01T18:20:00Z",
+    createdAt: "2025-10-01T09:00:00Z",
+  },
+  {
+    id: "usr-006",
+    name: "Emily Foster",
+    email: "emily.foster@avriocleanfund.com",
+    role: "Read-Only",
+    isActive: true,
+    lastLoginAt: "2026-03-28T14:00:00Z",
+    createdAt: "2026-01-15T09:00:00Z",
+  },
+];
