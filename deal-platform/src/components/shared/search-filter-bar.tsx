@@ -38,8 +38,8 @@ export function SearchFilterBar({
   className,
 }: SearchFilterBarProps) {
   return (
-    <div className={cn("flex flex-wrap items-center gap-3", className)}>
-      <div className="relative flex-1 min-w-[200px]">
+    <div className={cn("flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center", className)}>
+      <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           value={searchValue}
@@ -66,7 +66,7 @@ export function SearchFilterBar({
             onFilterChange?.(filter.value, !val || val === "all" ? "" : val)
           }
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder={filter.label} />
           </SelectTrigger>
           <SelectContent>

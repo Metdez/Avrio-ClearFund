@@ -197,7 +197,7 @@ export default function DashboardPage() {
                     key={stage}
                     className="flex items-center justify-between text-sm"
                   >
-                    <div className="flex items-center gap-2 min-w-[140px]">
+                    <div className="flex items-center gap-2 min-w-0 sm:min-w-[140px]">
                       <StatusBadge status={stage} context="pipeline" />
                     </div>
                     <div className="flex items-center gap-4 text-muted-foreground">

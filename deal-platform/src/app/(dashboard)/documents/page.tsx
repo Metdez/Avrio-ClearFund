@@ -204,6 +204,7 @@ export default function DocumentsPage() {
       key: "name",
       header: "File Name",
       sortable: true,
+      mobilePriority: 1,
       render: (item) => (
         <span className="font-medium">{item.name}</span>
       ),
@@ -211,6 +212,7 @@ export default function DocumentsPage() {
     {
       key: "fileType",
       header: "Type",
+      mobilePriority: 2,
       className: "w-20",
       render: (item) => (
         <Badge variant="outline" className="text-xs font-mono">
@@ -237,6 +239,7 @@ export default function DocumentsPage() {
       key: "uploadedAt",
       header: "Date",
       sortable: true,
+      mobilePriority: 2,
       className: "w-32",
       accessor: (item) => item.uploadedAt,
       render: (item) => (
@@ -246,7 +249,8 @@ export default function DocumentsPage() {
     {
       key: "entity",
       header: "Linked Entity",
-      className: "w-52",
+      mobilePriority: 1,
+      className: "w-auto sm:w-52",
       render: (item) => {
         const href = getEntityHref(item.entityType as string | undefined, item.entityId);
         const name = getEntityName(item.entityType as string | undefined, item.entityId);

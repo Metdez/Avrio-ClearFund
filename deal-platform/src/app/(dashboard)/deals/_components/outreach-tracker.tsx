@@ -14,6 +14,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 import { EntitySearchSelect } from "./entity-search-select";
 import { useDeals } from "./deals-provider";
@@ -65,6 +66,7 @@ export function OutreachTracker({ dealId }: OutreachTrackerProps) {
     updateDealCapitalProviderNotes,
   } = useDeals();
 
+  const isMobile = useIsMobile();
   const [isAddProviderOpen, setIsAddProviderOpen] = useState(false);
   const [selectedCapitalProviderId, setSelectedCapitalProviderId] = useState("");
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
@@ -198,7 +200,95 @@ export function OutreachTracker({ dealId }: OutreachTrackerProps) {
                 Add capital providers to start tracking outreach on this deal.
               </p>
             </div>
+          ) : isMobile ? (
+            /* ─── Mobile card view ─── */
+            <div className="space-y-3">
+              {linkRows.map(({ link, capitalProvider }) => {
+                const StatusIcon = STATUS_ICONS[link.status] ?? Send;
+                return (
+                  <div key={link.id} className="rounded-lg border p-3 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <Link
+                          href={`/capital-providers/${capitalProvider?.id ?? ""}`}
+                          className="font-medium text-sm text-primary underline-offset-4 hover:underline"
+                        >
+                          {capitalProvider?.firmName ?? "Unknown provider"}
+                        </Link>
+                        <p className="text-xs text-muted-foreground">
+                          {capitalProvider?.type ?? "—"}
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 shrink-0"
+                        onClick={() => handleOpenNote(link)}
+                        title="Add/edit note"
+                      >
+                        <StickyNote className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <Select
+                      value={link.status}
+                      onValueChange={(value) => {
+                        updateCapitalProviderStatus(
+                          link.id,
+                          value as DealCapitalProvider["status"]
+                        );
+                        toast.success(`Status updated to ${value}.`);
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <div className="flex items-center gap-2">
+                          <StatusIcon className="h-3.5 w-3.5 shrink-0" />
+                          <SelectValue />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CP_PITCH_STATUSES.map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>Pitched {formatDate(link.createdAt)}</span>
+                      <span title={formatDate(link.updatedAt)}>
+                        Updated {formatRelativeDate(link.updatedAt)}
+                      </span>
+                    </div>
+                    {link.notes && (
+                      <p className="text-xs text-muted-foreground border-t pt-2 line-clamp-2">
+                        {link.notes}
+                      </p>
+                    )}
+                    {expandedNoteId === link.id && (
+                      <div className="border-t pt-2 space-y-2">
+                        <Textarea
+                          value={editingNoteText}
+                          onChange={(e) => setEditingNoteText(e.target.value)}
+                          placeholder="Add a note about this pitch..."
+                          rows={3}
+                        />
+                        <div className="flex gap-2">
+                          <Button type="button" size="sm" onClick={() => handleSaveNote(link.id)}>
+                            Save
+                          </Button>
+                          <Button type="button" variant="ghost" size="sm" onClick={() => setExpandedNoteId(null)}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           ) : (
+            /* ─── Desktop table view ─── */
             <div className="overflow-x-auto">
               <table className="w-full min-w-[56rem] text-sm">
                 <thead>

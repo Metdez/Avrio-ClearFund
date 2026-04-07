@@ -9,6 +9,7 @@ import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { DataTable, type ColumnDef } from "@/components/shared/data-table";
 import { EmptyState } from "@/components/shared/empty-state";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
+import { PaginationControls } from "@/components/shared/pagination-controls";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -21,52 +22,6 @@ import { cn, formatDate } from "@/lib/utils";
 import { useBorrowerStore } from "./borrower-store";
 
 type BorrowerRow = Borrower & Record<string, unknown>;
-
-function PaginationControls({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground">
-        Page {currentPage} of {totalPages}
-      </p>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </Button>
-        {Array.from({ length: totalPages }).map((_, index) => {
-          const page = index + 1;
-          return (
-            <Button
-              key={page}
-              variant={page === currentPage ? "default" : "outline"}
-              onClick={() => onPageChange(page)}
-            >
-              {page}
-            </Button>
-          );
-        })}
-        <Button
-          variant="outline"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </Button>
-      </div>
-    </div>
-  );
-}
 
 export function BorrowersListClient() {
   const router = useRouter();
@@ -100,6 +55,7 @@ export function BorrowersListClient() {
       key: "name",
       header: "Borrower",
       sortable: true,
+      mobilePriority: 1,
       accessor: (borrower) => borrower.name,
       render: (borrower) => (
         <div className={cn("space-y-1", borrower.isArchived && "text-muted-foreground")}>
@@ -123,6 +79,7 @@ export function BorrowersListClient() {
       key: "projectType",
       header: "Project Type",
       sortable: true,
+      mobilePriority: 2,
       accessor: (borrower) => borrower.projectType ?? "",
       render: (borrower) => (
         <span className={cn(borrower.isArchived && "text-muted-foreground")}>
@@ -143,6 +100,7 @@ export function BorrowersListClient() {
     {
       key: "activeDeals",
       header: "Deals",
+      mobilePriority: 2,
       accessor: (borrower) =>
         deals.filter((deal) => deal.borrowerId === borrower.id).length,
       render: (borrower) => {

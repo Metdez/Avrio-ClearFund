@@ -362,14 +362,16 @@ function EmailsPageInner() {
       key: "emailSender",
       header: "From",
       sortable: true,
-      className: "min-w-[180px]",
+      mobilePriority: 1,
+      className: "min-w-0 sm:min-w-[180px]",
       render: (item) => <span className="font-medium">{item.emailSender}</span>,
     },
     {
       key: "emailSubject",
       header: "Subject",
       sortable: true,
-      className: "min-w-[250px]",
+      mobilePriority: 1,
+      className: "min-w-0 sm:min-w-[250px]",
       render: (item) => (
         <div>
           <div className="font-medium">{item.emailSubject}</div>
@@ -383,6 +385,7 @@ function EmailsPageInner() {
       key: "timestamp",
       header: "Date",
       sortable: true,
+      mobilePriority: 2,
       className: "w-[120px]",
       accessor: (item) => item.timestamp,
       render: (item) => (
@@ -392,6 +395,7 @@ function EmailsPageInner() {
     {
       key: "linkStatus",
       header: "Status",
+      mobilePriority: 2,
       className: "w-[100px]",
       render: (item) =>
         item.linkStatus === "linked" ? (
@@ -407,7 +411,7 @@ function EmailsPageInner() {
     {
       key: "suggestions",
       header: "Suggested Match",
-      className: "min-w-[220px]",
+      className: "min-w-0 sm:min-w-[220px]",
       render: (item) =>
         item.suggestions.length > 0 ? (
           <div className="flex flex-wrap gap-1">
@@ -468,6 +472,7 @@ function EmailsPageInner() {
       key: "contactName",
       header: "Contact",
       sortable: true,
+      mobilePriority: 1,
       render: (item) => (
         <div>
           <p className="font-medium">{item.contactName}</p>
@@ -485,6 +490,7 @@ function EmailsPageInner() {
       key: "status",
       header: "Status",
       sortable: true,
+      mobilePriority: 1,
       render: (item) => (
         <Badge
           variant="secondary"
@@ -497,6 +503,7 @@ function EmailsPageInner() {
     {
       key: "progress",
       header: "Progress",
+      mobilePriority: 2,
       render: (item) => (
         <span className="text-sm font-medium">
           {item.followUpsSent} / {item.totalFollowUps}

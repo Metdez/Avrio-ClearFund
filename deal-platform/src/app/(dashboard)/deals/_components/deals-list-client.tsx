@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { useDeals } from "./deals-provider";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { DataTable, type ColumnDef } from "@/components/shared/data-table";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
+import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,7 @@ export function DealsListClient() {
       key: "name",
       header: "Deal Name",
       sortable: true,
+      mobilePriority: 1,
       accessor: (row) => row.name,
       render: (row) => (
         <div className="space-y-1">
@@ -110,6 +112,7 @@ export function DealsListClient() {
       key: "pipelineStage",
       header: "Stage",
       sortable: true,
+      mobilePriority: 1,
       accessor: (row) => row.pipelineStage,
       render: (row) => (
         <StatusBadge status={row.pipelineStage} context="pipeline" />
@@ -119,6 +122,7 @@ export function DealsListClient() {
       key: "estimatedDealSize",
       header: "Estimated Size",
       sortable: true,
+      mobilePriority: 2,
       accessor: (row) => row.estimatedDealSize ?? 0,
       render: (row) =>
         row.estimatedDealSize ? formatCurrency(row.estimatedDealSize) : "TBD",
@@ -227,37 +231,12 @@ export function DealsListClient() {
             onRowClick={(row) => router.push(`/deals/${row.id}`)}
           />
 
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Showing {(currentPage - 1) * PAGE_SIZE + 1}-
-              {Math.min(currentPage * PAGE_SIZE, filteredRows.length)} of{" "}
-              {filteredRows.length} deals
-            </p>
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={currentPage === 1}
-                onClick={() => setPage((value) => Math.max(1, value - 1))}
-              >
-                <ChevronLeft className="mr-1 h-4 w-4" />
-                Previous
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={currentPage === totalPages}
-                onClick={() =>
-                  setPage((value) => Math.min(totalPages, value + 1))
-                }
-              >
-                Next
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            summary={`Showing ${(currentPage - 1) * PAGE_SIZE + 1}-${Math.min(currentPage * PAGE_SIZE, filteredRows.length)} of ${filteredRows.length} deals`}
+          />
         </>
       )}
 

@@ -240,7 +240,7 @@ export function ExecutionChecklist({ dealId }: ExecutionChecklistProps) {
 
           <div className="flex items-center gap-2">
             <Select onValueChange={(value: string | null) => { if (value) handleTemplateSelect(value); }}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="Load template..." />
               </SelectTrigger>
               <SelectContent>
@@ -352,7 +352,7 @@ export function ExecutionChecklist({ dealId }: ExecutionChecklistProps) {
                     }}
                   />
                 </div>
-                <div className="ml-7 flex flex-wrap items-center gap-2">
+                <div className="ml-0 sm:ml-7 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2">
                   <Select
                     value={newItem.assigneeUserId}
                     onValueChange={(value) =>
@@ -362,7 +362,7 @@ export function ExecutionChecklist({ dealId }: ExecutionChecklistProps) {
                       }))
                     }
                   >
-                    <SelectTrigger className="w-[180px] h-8 text-xs">
+                    <SelectTrigger className="w-full sm:w-[180px] h-8 text-xs">
                       <SelectValue placeholder="Assign to..." />
                     </SelectTrigger>
                     <SelectContent>

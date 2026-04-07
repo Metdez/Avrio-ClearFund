@@ -472,6 +472,7 @@ export function ExecutionWorkspace({ dealId }: ExecutionWorkspaceProps) {
     {
       key: "name",
       header: "Task Name",
+      mobilePriority: 1,
       render: (task) => (
         <div
           className={cn(
@@ -500,6 +501,7 @@ export function ExecutionWorkspace({ dealId }: ExecutionWorkspaceProps) {
     {
       key: "assigneeName",
       header: "Assignee",
+      mobilePriority: 2,
       render: (task) => (
         <div className="space-y-1">
           <p className="font-medium">{task.assigneeName || "Unassigned"}</p>
@@ -519,6 +521,7 @@ export function ExecutionWorkspace({ dealId }: ExecutionWorkspaceProps) {
     {
       key: "status",
       header: "Status",
+      mobilePriority: 1,
       render: (task) => (
         <Select
           value={task.status}
@@ -551,6 +554,7 @@ export function ExecutionWorkspace({ dealId }: ExecutionWorkspaceProps) {
     {
       key: "dueDate",
       header: "Due Date",
+      mobilePriority: 2,
       render: (task) => (
         <div className="space-y-1">
           <p>{task.dueDate ? formatDate(task.dueDate) : "No due date"}</p>

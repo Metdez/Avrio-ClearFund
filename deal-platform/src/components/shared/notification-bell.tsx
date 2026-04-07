@@ -57,7 +57,7 @@ export function NotificationBell() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        className="relative inline-flex items-center justify-center rounded-lg size-7 hover:bg-muted transition-colors"
+        className="relative inline-flex items-center justify-center rounded-lg size-9 sm:size-7 hover:bg-muted transition-colors"
       >
         <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
@@ -70,7 +70,7 @@ export function NotificationBell() {
         )}
         <span className="sr-only">Notifications</span>
       </PopoverTrigger>
-      <PopoverContent align="end" sideOffset={8} className="w-96 p-0">
+      <PopoverContent align="end" sideOffset={8} className="w-[calc(100vw-2rem)] sm:w-96 p-0">
         <div className="flex items-center justify-between px-4 py-3">
           <span className="text-sm font-semibold">Notifications</span>
           {unreadCount > 0 && (

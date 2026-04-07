@@ -9,6 +9,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface PipelineStageProps {
   currentStage: PipelineStageType;
@@ -21,10 +29,42 @@ export function PipelineStage({
   onStageClick,
   className,
 }: PipelineStageProps) {
+  const isMobile = useIsMobile();
   const currentIndex = PIPELINE_STAGES.indexOf(
     currentStage as (typeof PIPELINE_STAGES)[number]
   );
 
+  // Mobile: compact Select dropdown
+  if (isMobile) {
+    const colors = PIPELINE_STAGE_COLORS[currentStage as keyof typeof PIPELINE_STAGE_COLORS] ?? "";
+    return (
+      <div className={className}>
+        {onStageClick ? (
+          <Select
+            value={currentStage}
+            onValueChange={(val) => onStageClick(val as PipelineStageType)}
+          >
+            <SelectTrigger className={cn("w-full", colors)}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PIPELINE_STAGES.map((stage) => (
+                <SelectItem key={stage} value={stage}>
+                  {stage}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <div className={cn("rounded px-3 py-2 text-sm font-medium text-center", colors)}>
+            {currentStage}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Desktop: horizontal stage buttons
   return (
     <TooltipProvider>
       <div className={cn("flex items-center gap-1", className)}>
